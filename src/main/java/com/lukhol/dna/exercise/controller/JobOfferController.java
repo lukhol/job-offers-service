@@ -12,7 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/joboffers")
+@RequestMapping("/job/offers")
 @RequiredArgsConstructor
 public class JobOfferController {
 
@@ -37,7 +37,7 @@ public class JobOfferController {
         JobOffer jobOffer = jobOfferService.create(jobOfferDto);
 
         URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/joboffers/{id}")
+                .fromCurrentContextPath().path("/job/offers/{id}")
                 .buildAndExpand(jobOffer.getId())
                 .toUri();
 

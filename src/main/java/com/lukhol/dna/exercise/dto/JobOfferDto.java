@@ -24,4 +24,6 @@ public class JobOfferDto {
 
     @JsonFormat(pattern = ExerciseApplication.DATE_FORMAT)
     private Date to;
+
+    private long createdById;
 }

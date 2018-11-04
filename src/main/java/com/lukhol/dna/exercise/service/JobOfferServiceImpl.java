@@ -4,6 +4,7 @@ import com.lukhol.dna.exercise.dto.JobOfferDto;
 import com.lukhol.dna.exercise.errors.ServiceValidationException;
 import com.lukhol.dna.exercise.model.Category;
 import com.lukhol.dna.exercise.model.JobOffer;
+import com.lukhol.dna.exercise.model.User;
 import com.lukhol.dna.exercise.repository.CategoryRepository;
 import com.lukhol.dna.exercise.repository.JobOfferRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,13 +76,15 @@ public class JobOfferServiceImpl implements JobOfferService {
     }
 
     private JobOfferDto jobOfferToDto(JobOffer jobOffer) {
+        User user = jobOffer.getCreatedBy();
+
         return JobOfferDto.builder()
                 .title(jobOffer.getTitle())
                 .categoryId(jobOffer.getCategory().getId())
                 .companyName(jobOffer.getCompanyName())
                 .from(jobOffer.getFromDate())
                 .to(jobOffer.getToDate())
+                .createdById(user != null ? user.getId() : 0)
                 .build();
-
     }
 }
