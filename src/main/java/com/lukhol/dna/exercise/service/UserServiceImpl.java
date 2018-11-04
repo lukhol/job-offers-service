@@ -4,10 +4,15 @@ import com.lukhol.dna.exercise.dto.UserDto;
 import com.lukhol.dna.exercise.model.User;
 import com.lukhol.dna.exercise.repository.UserRepository;
 import com.lukhol.dna.exercise.errors.ServiceValidationException;
+import com.lukhol.dna.exercise.security.UserPrincipal;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -79,7 +84,16 @@ public class UserServiceImpl implements UserService {
                 .findPersistedById(id)
                 .orElseThrow(() -> new NotFoundException("Not found user with id: " + id));
 
-        userRepository.softDelete(user);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            Long currentUserId = ((UserPrincipal)authentication.getPrincipal()).getId();
+            if(currentUserId !=  null && currentUserId.equals(user.getId())) {
+                userRepository.softDelete(user);
+                return;
+            }
+        }
+
+        throw new ServiceValidationException("Are you trying to remove another user than you? This is not allowed.");
     }
 
     private User hidePassword(User user) {
