@@ -1,5 +1,6 @@
 package com.lukhol.dna.exercise.model;
 
+import com.lukhol.dna.exercise.model.base.StateAuditable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,7 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-public class JobOffer {
+public class JobOffer extends StateAuditable<User> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

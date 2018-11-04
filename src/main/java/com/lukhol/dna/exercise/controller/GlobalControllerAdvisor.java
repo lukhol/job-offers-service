@@ -2,6 +2,7 @@ package com.lukhol.dna.exercise.controller;
 
 import com.lukhol.dna.exercise.errors.ErrorResponse;
 import com.lukhol.dna.exercise.errors.ServiceValidationException;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,5 +16,10 @@ public class GlobalControllerAdvisor {
     @ExceptionHandler(ServiceValidationException.class)
     public ResponseEntity<?> handleServiceValidationException(ServiceValidationException e) {
         return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), System.currentTimeMillis()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleException(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

@@ -59,9 +59,4 @@ public class UserController {
         userService.removeUserById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> handleException(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
 }
