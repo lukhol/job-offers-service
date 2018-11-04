@@ -66,6 +66,15 @@ public class JobOfferServiceImpl implements JobOfferService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<JobOfferDto> findByUserIdsAndCategoryIds(List<Long> userIds, List<Long> categoryIds) {
+        return jobOfferRepository
+                .findByUserIdsAndCategoryIds(userIds, userIds.size(), categoryIds, categoryIds.size())
+                .stream()
+                .map(this::jobOfferToDto)
+                .collect(Collectors.toList());
+    }
+
     private boolean isValid(String... values) {
         for (String val : values) {
             if (StringUtils.isEmpty(val))

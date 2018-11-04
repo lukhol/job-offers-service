@@ -17,4 +17,6 @@ public interface JobOfferService {
     Optional<JobOfferDto> findDtoById(Long id);
 
     List<JobOfferDto> findAll();
+
+    List<JobOfferDto> findByUserIdsAndCategoryIds(List<Long> userIds, List<Long> categoryIds);
 }

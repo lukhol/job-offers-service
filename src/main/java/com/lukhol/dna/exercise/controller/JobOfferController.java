@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/job/offers")
@@ -42,5 +43,12 @@ public class JobOfferController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> findByUserIdsAndCategoryIds(@RequestParam("userId") final List<Long> userIds,
+                                                         @RequestParam("categoryId") final List<Long> categoryIds) {
+
+        return ResponseEntity.ok(jobOfferService.findByUserIdsAndCategoryIds(userIds, categoryIds));
     }
 }

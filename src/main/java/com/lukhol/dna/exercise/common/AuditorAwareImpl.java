@@ -25,10 +25,8 @@ public class AuditorAwareImpl implements AuditorAware<User> {
         if (auth == null)
             return Optional.empty();
 
-        String userIdString = auth.getName();
         try {
-            long userId = Long.parseLong(userIdString);
-            return userRepository.findById(userId);
+            return userRepository.findPersistedByLogin(auth.getName());
         } catch (Exception e) {
             log.error("Error occurred during auditing user.");
         }
