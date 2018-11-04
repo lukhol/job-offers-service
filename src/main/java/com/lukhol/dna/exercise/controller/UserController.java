@@ -5,6 +5,7 @@ import com.lukhol.dna.exercise.model.User;
 import com.lukhol.dna.exercise.service.UserService;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -21,11 +23,13 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
+        log.info("{} GET /users ", getClass().getSimpleName());
         return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable final Long id) throws NotFoundException {
+        log.info("GET /users/{id} ", id);
 
         User user = userService
                 .findById(id)
@@ -36,6 +40,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody final UserDto userDto) {
+        log.info("POST /users {}", userDto.toString());
+
         User user = userService.create(userDto);
 
         URI location = ServletUriComponentsBuilder
@@ -49,6 +55,8 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@RequestBody final UserDto userDto,
                                         @PathVariable final Long id) throws NotFoundException {
+        log.info("PUT /users/{id} {}", id, userDto);
+
         User user = userService.update(id, userDto);
         user.setPassword(null);
         return ResponseEntity.ok(user);
@@ -56,6 +64,8 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable final Long id) throws NotFoundException {
+        log.info("DELETE /users/{id} ", id);
+
         userService.removeUserById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

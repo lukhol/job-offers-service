@@ -19,6 +19,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        log.info("ATTEMPT AUTHENTICATION: {} {}", request.getParameter("username"), request.getParameter("password"));
         return super.attemptAuthentication(request, response);
     }
 
@@ -27,8 +28,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
-        log.debug(getClass().getSimpleName() + "successfulAuthentication executed");
+        log.info("successfulAuthentication executed");
         String token = tokenProvider.generateToken(auth);
         res.addHeader("JWT Token", "Bearer " + token);
+        log.info("JWT token added to header: {}", token);
+
     }
 }

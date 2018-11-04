@@ -35,7 +35,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             if(jwt != null && tokenProvider.validateToken(jwt)) {
                 Long userId = tokenProvider.getUserIdFromJwt(jwt);
-                log.debug("UserId from JWT: " + userId);
+                log.debug("UserId from JWT: {}", userId);
 
                 User user = userRepository.findPersistedById(userId).orElseThrow(() -> new NotFoundException("User not found"));
                 UserDetails userDetails = new UserPrincipal(user);
