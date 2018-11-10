@@ -5,6 +5,7 @@ import com.lukhol.dna.exercise.repository.UserRepository;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,16 +17,17 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.io.IOException;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider tokenProvider;
-    private final UserRepository userRepository;
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -33,7 +35,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(httpServletRequest);
 
-            if(jwt != null && tokenProvider.validateToken(jwt)) {
+            if (jwt != null && tokenProvider.validateToken(jwt)) {
                 Long userId = tokenProvider.getUserIdFromJwt(jwt);
                 log.debug("UserId from JWT: {}", userId);
 
@@ -53,7 +55,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(bearerToken != null && !bearerToken.equals("") && bearerToken.startsWith("Bearer ")) {
+        if (bearerToken != null && !bearerToken.equals("") && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7, bearerToken.length());
         }
 

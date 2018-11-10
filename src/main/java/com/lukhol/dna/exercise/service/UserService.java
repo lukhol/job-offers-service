@@ -16,5 +16,5 @@ public interface UserService {
 
     User update(Long id, UserDto userDto) throws NotFoundException;
 
-    void removeUserById(Long id) throws NotFoundException;
+    void removeUserById(Long id, User loggedInUser) throws NotFoundException;
 }

@@ -3,7 +3,6 @@ package com.lukhol.dna.exercise.model;
 import com.lukhol.dna.exercise.model.base.StateAuditable;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,11 +10,10 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@ToString
 public class JobOffer extends StateAuditable<User> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "myNative")
     private Long id;
 
     @ManyToOne

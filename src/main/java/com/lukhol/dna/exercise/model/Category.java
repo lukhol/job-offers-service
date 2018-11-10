@@ -1,9 +1,7 @@
 package com.lukhol.dna.exercise.model;
 
 import com.lukhol.dna.exercise.model.base.StateAuditable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -12,11 +10,14 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category extends StateAuditable<User> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "myNative")
     private Long id;
 
     @Column(unique = true)

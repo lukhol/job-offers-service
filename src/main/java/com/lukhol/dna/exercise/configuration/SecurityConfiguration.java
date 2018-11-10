@@ -1,5 +1,6 @@
 package com.lukhol.dna.exercise.configuration;
 
+import com.lukhol.dna.exercise.repository.UserRepository;
 import com.lukhol.dna.exercise.security.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final AppUserDetailsService userDetailsService;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
-    private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final JwtTokenProvider tokenProvider;
 
     @Bean
@@ -41,6 +41,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(tokenProvider);
         filter.setAuthenticationManager(authenticationManagerBean());
         return filter;
+    }
+
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter();
     }
 
     @Override
@@ -70,6 +75,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .anyRequest().permitAll()
                     .and()
                 .addFilter(jwtAuthenticationFilter())
-                .addFilterBefore(jwtAuthorizationFilter, BasicAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class);
+
+        http.headers().frameOptions().sameOrigin();
     }
 }

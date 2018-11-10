@@ -1,7 +1,7 @@
 package com.lukhol.dna.exercise.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.lukhol.dna.exercise.ExerciseApplication;
+import com.lukhol.dna.exercise.configuration.Config;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,10 +19,10 @@ public class JobOfferDto {
     private long categoryId;
     private String companyName;
 
-    @JsonFormat(pattern = ExerciseApplication.DATE_FORMAT)
+    @JsonFormat(pattern = Config.DATE_FORMAT)
     private Date from;
 
-    @JsonFormat(pattern = ExerciseApplication.DATE_FORMAT)
+    @JsonFormat(pattern = Config.DATE_FORMAT)
     private Date to;
 
     private long createdById;

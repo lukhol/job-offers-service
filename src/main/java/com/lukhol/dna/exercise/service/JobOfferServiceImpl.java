@@ -28,13 +28,13 @@ public class JobOfferServiceImpl implements JobOfferService {
     @Override
     @Transactional
     public JobOffer create(JobOfferDto jobOfferDto) {
-        Category category = categoryRepository
-                .findById(jobOfferDto.getCategoryId())
-                .orElseThrow(() -> new ServiceValidationException("Category with provided id does not exists."));
-
         if (!isValid(jobOfferDto.getTitle(), jobOfferDto.getCompanyName())) {
             throw new ServiceValidationException("Any fields cannot be empty.");
         }
+
+        Category category = categoryRepository
+                .findById(jobOfferDto.getCategoryId())
+                .orElseThrow(() -> new ServiceValidationException("Category with provided id does not exists."));
 
         JobOffer jobOffer = new JobOffer();
         jobOffer.setCategory(category);

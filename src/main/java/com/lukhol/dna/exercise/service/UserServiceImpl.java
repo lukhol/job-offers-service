@@ -1,18 +1,13 @@
 package com.lukhol.dna.exercise.service;
 
 import com.lukhol.dna.exercise.dto.UserDto;
+import com.lukhol.dna.exercise.errors.ServiceValidationException;
 import com.lukhol.dna.exercise.model.User;
 import com.lukhol.dna.exercise.repository.UserRepository;
-import com.lukhol.dna.exercise.errors.ServiceValidationException;
-import com.lukhol.dna.exercise.security.UserPrincipal;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -48,49 +43,43 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User create(UserDto userDto) {
-        if(StringUtils.isEmpty(userDto.getLogin()) || StringUtils.isEmpty(userDto.getPassword()))
+        if (StringUtils.isEmpty(userDto.getLogin()) || StringUtils.isEmpty(userDto.getPassword()))
             throw new ServiceValidationException("Username and password cannot be empty.");
 
-        if(!userRepository.isLoginUnique(userDto.getLogin()))
+        if (!userRepository.isLoginUnique(userDto.getLogin()))
             throw new ServiceValidationException("This login is already occupied. Choose another one.");
 
-        User user = new User();
-        user.setLogin(userDto.getLogin());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user = userRepository.save(user);
+        User user = new User(userDto.getLogin(), userDto.getPassword());
+        userRepository.save(user);
         return user;
     }
 
     @Override
     @Transactional
     public User update(Long id, UserDto userDto) throws NotFoundException {
+        if (StringUtils.isEmpty(userDto.getLogin()) || StringUtils.isEmpty(userDto.getPassword()))
+            throw new ServiceValidationException("Username and password cannot be empty.");
+
         User user = userRepository
                 .findPersistedById(id)
                 .orElseThrow(() -> new NotFoundException("Not found user with id: " + id));
 
-        if(StringUtils.isEmpty(userDto.getLogin()) || StringUtils.isEmpty(userDto.getPassword()))
-            throw new ServiceValidationException("Username and password cannot be empty.");
-
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setLogin(user.getLogin());
+        user.setLogin(userDto.getLogin());
 
         return user;
     }
 
     @Override
     @Transactional
-    public void removeUserById(Long id) throws NotFoundException {
+    public void removeUserById(Long id, User loggedInUser) throws NotFoundException {
         User user = userRepository
                 .findPersistedById(id)
                 .orElseThrow(() -> new NotFoundException("Not found user with id: " + id));
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
-            Long currentUserId = ((UserPrincipal)authentication.getPrincipal()).getId();
-            if(currentUserId !=  null && currentUserId.equals(user.getId())) {
-                userRepository.softDelete(user);
-                return;
-            }
+        if (loggedInUser != null && user.getId().equals(loggedInUser.getId())) {
+            userRepository.softDelete(user);
+            return;
         }
 
         throw new ServiceValidationException("Are you trying to remove another user than you? This is not allowed.");
