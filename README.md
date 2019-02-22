@@ -1,0 +1,1 @@
+# Job offer Rest API [![Build Status](https://travis-ci.org/lukhol/job-offers-service.svg?branch=master)](https://travis-ci.org/lukhol/job-offers-service)
